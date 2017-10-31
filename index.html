@@ -1,17 +1,75 @@
 <!doctype html>
 <html>
 <head>
-    <title>Rotating mesh - WebGL experiment</title>
+  <script type="x-shader/x-vertex" id="vertexShader">
+			varying vec3 vWorldPosition;
+			void main() {
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentShader">
+			uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+			varying vec3 vWorldPosition;
+			void main() {
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+			}
+		</script>
+    <title>Steni test</title>
     <style>
         body {
             background: #aaa;
             overflow: hidden;
         }
+        .range-slider .input-range {
+  -webkit-appearance: none;
+  height: 200px;
+  border-radius: 5px;
+  background: #ccc;
+  outline: none;
+  writing-mode: bt-lr;
+  /* IE */
+  -webkit-appearance: slider-vertical;
+  /* WebKit */
+}
+
+::-moz-range-track {
+  background: #ccc;
+  border: 0;
+}
+
+input::-moz-focus-inner {
+  border: 0;
+}
+
     </style>
 </head>
 <body>
     <div id="container"></div>
+    <div style="position:absolute;top:45px;right:50px;height: 50px;" >
+      <img style="HEIGHT:99%;cursor:pointer" src="sn-130.jpg" onclick="changeMat(3)" >
+      <img style="HEIGHT:99%;cursor:pointer" src="sn-305.jpg" onclick="changeMat(2)">
+      <img style="HEIGHT:99%;cursor:pointer" src="steni-nature-sn-20_web.jpg" onclick="changeMat(0)">
+      <img style="HEIGHT:99%;cursor:pointer" src="vision_sv10001.jpg" onclick="changeMat(4)">
+      <img style="HEIGHT:99%;cursor:pointer" src="vision_sv40004.jpg" onclick="changeMat(5)">
+      <img style="HEIGHT:99%;cursor:pointer" src="vision_sv40005.jpg" onclick="changeMat(6)">
+
+    </div>
+    <div style="position:absolute;top:100px;right:25px;height: 500px;" >
+      <div class="range-slider">
+        <input class="input-range" orient="vertical" type="range" step="0.1" value="5" min="1" max="12" onchange="changeTextureValue(this.value)">
+
+      </div>
+    </div>
     <script src="three.min.js"></script>
-    <script src="main.js"></script>
+    <!--<script src="FresnelShader.js"></script>-->
+    <script src="OrbitControls.js"></script>
+    <script src="main2.js"></script>
 </body>
 </html>
